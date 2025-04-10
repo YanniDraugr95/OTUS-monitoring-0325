@@ -24,8 +24,8 @@
 ##### 1. Установка Prometheus
 Prometheus установлен на отдельной машине, в конфиг добавлена джоба для сбора данных с самого Prometheus. Конфигурационный файл с настройками приложен.
 
-![prometheus.yml](images/prom1.jpg)
-![prometheus.yml](images/prom2.jpg)
+![prometheus.yml](GAP1/images/prom1.jpg)
+![prometheus.yml](GAP1/images/prom2.jpg)
 
 ##### 2. Установка Wordpress
 Установлена последняя версия Wordpress, также установлен плагин для сбора метрик для Prometheus.
@@ -34,25 +34,25 @@ Prometheus установлен на отдельной машине, в кон�
 Установлены указанные в таблице выше экспортеры.
 
 ###### Node exporter
-![Node exporter](images/node.jpg)
+![Node exporter](GAP1/images/node.jpg)
 
 ###### MySQL exporter
-![MySQL exporter](images/mysql.jpg)
+![MySQL exporter](GAP1/images/mysql.jpg)
 
 ###### Blackbox exporter
-![Blackbox exporter](images/blackbox.jpg)
+![Blackbox exporter](GAP1/images/blackbox.jpg)
 
 ###### Blackbox probe
-![Blackbox probe](images/probe.jpg)
+![Blackbox probe](GAP1/images/probe.jpg)
 
 ###### PromPress plugin
-![PromPress plugin](images/prompress.jpg)
+![PromPress plugin](GAP1/images/prompress.jpg)
 
 ###### Nginx exporter
-![Nginx exporter](images/nginx.jpg)
+![Nginx exporter](GAP1/images/nginx.jpg)
 
 ###### PHP-FPM exporter
-![PHP-FPM exporter](images/php-fpm.jpg)
+![PHP-FPM exporter](GAP1/images/php-fpm.jpg)
 
 ##### 4. Настройка прокси
 Nginx проксирует запросы к страницам с метриками на IP:443. Конфигурационный файл с настройками прокси с использованием SSL и авторизации приложен.
