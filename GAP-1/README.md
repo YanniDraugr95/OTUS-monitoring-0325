@@ -24,8 +24,8 @@
 ##### 1. Установка Prometheus
 Prometheus установлен на отдельной машине, в конфиг добавлена джоба для сбора данных с самого Prometheus. Конфигурационный файл с настройками приложен.
 
-![prometheus.yml](GAP1/images/prom1.jpg)
-![prometheus.yml](GAP1/images/prom2.jpg)
+![prometheus.yml](images/prom1.jpg)
+![prometheus.yml](images/prom2.jpg)
 
 ##### 2. Установка Wordpress
 Установлена последняя версия Wordpress, также установлен плагин для сбора метрик для Prometheus.
