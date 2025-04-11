@@ -1,0 +1,134 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  # scrape_timeout is set to the global default (10s).
+  external_labels:
+    site: prod
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# Sending data to VictoriaMetrics
+remote_write:
+  - url: "http://192.168.56.12:8428/api/v1/write"
+    write_relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: "192.168.56.10:9090"
+        action: replace
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: "prometheus"
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: "node-exporter"
+    metrics_path: /node/metrics
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["192.168.56.11:443"]
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    basic_auth:
+      username: <login_here>
+      password: <password_here>
+
+  - job_name: "mysqld-exporter"
+    metrics_path: /mysql/metrics
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["192.168.56.11:443"]
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    basic_auth:
+      username: <login_here>
+      password: <password_here>
+
+  - job_name: "nginx-exporter"
+    metrics_path: /nginx/metrics
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["192.168.56.11:443"]
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    basic_auth:
+      username: <login_here>
+      password: <password_here>
+
+  - job_name: "php-fpm-exporter"
+    metrics_path: /php-fpm/metrics
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["192.168.56.11:443"]
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    basic_auth:
+      username: <login_here>
+      password: <password_here>
+
+
+  - job_name: "blackbox-exporter"
+    metrics_path: /blackbox/metrics
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["192.168.56.11:443"]
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    basic_auth:
+      username: <login_here>
+      password: <password_here>
+
+  - job_name: "yikwdpress-probe"
+    metrics_path: /blackbox/probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets: ['http://yikwdpress.com']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 192.168.56.11:443
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    basic_auth:
+      username: <login_here>
+      password: <password_here>
+
+  - job_name: "yikwdpress-exporter"
+    metrics_path: /wordpress/metrics
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["yikwdpress.com"]
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    basic_auth:
+      username: <login_here>
+      password: <password_here>
+
+

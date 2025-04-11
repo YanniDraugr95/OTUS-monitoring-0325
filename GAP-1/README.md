@@ -1,5 +1,5 @@
 # Мониторинг с помощью Prometheus
----
+
 ## Задача
 
 Настроить сбор метрик с помощью Prometheus на примере мониторинга CMS. Задействовать максимальное количество экспортеров для мониторинга состояния компонентов системы. Настроить доступ к экспортерам по одному порту с использованием SSL и авторизации.
@@ -24,8 +24,8 @@
 ##### 1. Установка Prometheus
 Prometheus установлен на отдельной машине, в конфиг добавлена джоба для сбора данных с самого Prometheus. Конфигурационный файл с настройками приложен.
 
-![prometheus.yml](images/prom1.jpg)
-![prometheus.yml](images/prom2.jpg)
+![prometheus.yml](images/prom1.JPG)
+![prometheus.yml](images/prom2.JPG)
 
 ##### 2. Установка Wordpress
 Установлена последняя версия Wordpress, также установлен плагин для сбора метрик для Prometheus.
@@ -34,25 +34,25 @@ Prometheus установлен на отдельной машине, в кон�
 Установлены указанные в таблице выше экспортеры.
 
 ###### Node exporter
-![Node exporter](images/node.jpg)
+![Node exporter](images/node.JPG)
 
 ###### MySQL exporter
-![MySQL exporter](images/mysql.jpg)
+![MySQL exporter](images/mysql.JPG)
 
 ###### Blackbox exporter
-![Blackbox exporter](images/blackbox.jpg)
+![Blackbox exporter](images/blackbox.JPG)
 
 ###### Blackbox probe
-![Blackbox probe](images/probe.jpg)
+![Blackbox probe](images/probe.JPG)
 
 ###### PromPress plugin
-![PromPress plugin](images/prompress.jpg)
+![PromPress plugin](images/prompress.JPG)
 
 ###### Nginx exporter
-![Nginx exporter](images/nginx.jpg)
+![Nginx exporter](images/nginx.JPG)
 
 ###### PHP-FPM exporter
-![PHP-FPM exporter](images/php-fpm.jpg)
+![PHP-FPM exporter](images/php-fpm.JPG)
 
 ##### 4. Настройка прокси
 Nginx проксирует запросы к страницам с метриками на IP:443. Конфигурационный файл с настройками прокси с использованием SSL и авторизации приложен.
