@@ -1,0 +1,33 @@
+groups:
+  - name: Node Exporter
+    rules:
+      - alert: HostCriticallyHighCpuLoad
+        expr: 100 * (avg by (instance, cpu) (rate(node_cpu_seconds_total{mode!="idle"}[2m]))) / (avg by (instance, cpu) (rate(node_cpu_seconds_total[2m]))) > 95
+        for: 5m
+        labels:
+          severity: critical
+          job: node-exporter
+        annotations:
+          summary: "Host critically high CPU load on {{ $labels.instance }}"
+          description: "Load on CPU {{ $labels.cpu }} > {{ $value }}% for 5m"
+
+      - alert: HostHighCpuLoad
+        expr: 100 * (avg by (instance, cpu) (rate(node_cpu_seconds_total{mode!="idle"}[2m]))) / (avg by (instance, cpu) (rate(node_cpu_seconds_total[2m]))) > 80
+        for: 10m
+        labels:
+          severity: warning
+          job: node-exporter
+        annotations:
+          summary: "Host high CPU load on {{ $labels.instance }}"
+          description: "Load on CPU {{ $labels.cpu }} > {{ $value }}% for 10m"
+
+      - alert: HostGrowingCpuLoad
+        expr: 100 * (avg by (instance, cpu) (rate(node_cpu_seconds_total{mode!="idle"}[2m]))) / (avg by (instance, cpu) (rate(node_cpu_seconds_total[2m]))) > 70
+        for: 15m
+        labels:
+          severity: info
+          job: node-exporter
+        annotations:
+          summary: "Host CPU load growing on {{ $labels.instance }}"
+          description: "Load on CPU {{ $labels.cpu }} > {{ $value }}% for 15m"
+

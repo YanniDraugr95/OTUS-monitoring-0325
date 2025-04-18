@@ -1,0 +1,24 @@
+{{ define "telegram.alert" }}
+    {{ range .Alerts }}
+    {{ if eq .Status "firing"}}<b>{{ .Status | toUpper }}</b>&#x1F525{{ else }}<b>{{ .Status | toUpper }}</b>&#x2705{{ end }}
+    <b>{{ .Labels.alertname }}</b>
+    {{- if .Labels.severity }}
+    <b>Severity:</b> {{ .Labels.severity }}
+    {{- end }}
+    {{- if .Labels.component }}
+    <b>Component:</b> {{ .Labels.component }}
+    {{- end }}
+    {{- if .Labels.instance }}
+    <b>Instance:</b> {{ .Labels.instance }}
+    {{- end }}
+    {{- if .Annotations.message }}
+    {{ .Annotations.message }}
+    {{- end }}
+    {{- if .Annotations.summary }}
+    {{ .Annotations.summary }}
+    {{- end }}
+    {{- if .Annotations.description }}
+    {{ .Annotations.description }}
+    {{- end }}
+    {{ end }}
+    {{ end }}

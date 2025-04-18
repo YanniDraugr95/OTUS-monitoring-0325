@@ -1,0 +1,87 @@
+####### include custom message templates #######
+templates:
+  - '/etc/alertmanager/*.tmpl'
+
+####### configure alert muting #######
+mute_time_intervals:
+  - name: no-alert
+    time_intervals:
+      - weekdays: ['Monday','Tuesday','Wednesday','Thursday','Friday']
+        times:
+        - start_time: '00:00'
+          end_time: '09:00'
+        - start_time: '18:00'
+          end_time: '24:00'
+      - weekdays: ['Saturday','Sunday']
+        times:
+        - start_time: '00:00'
+          end_time: '24:00'
+
+####### define routes #######
+route:
+  group_by: ['alertname','cpu']
+  group_wait: 10s
+  group_interval: 30s
+  repeat_interval: 1h
+  receiver: 'default-receiver'
+  routes:
+    - match:
+        severity: 'critical'
+      routes:
+        - receiver: '5x2-Team'
+          continue: true
+        - receiver: '24x7-Team'
+
+    - match:
+        severity: 'warning'
+      routes:
+        - receiver: '5x2-Team'
+          continue: true
+          mute_time_intervals:
+            - no-alert
+        - receiver: '24x7-Team'
+
+    - match:
+        severity: 'info'
+      routes:
+        - receiver: '5x2-Team'
+          continue: true
+          mute_time_intervals:
+            - no-alert
+        - receiver: '24x7-Team'
+
+####### define receivers #######
+receivers:
+  - name: '5x2-Team'
+    telegram_configs:
+      - api_url: 'https://api.telegram.org'
+        bot_token: '345kjdfgsdfgker873ug3n3or8' #add token here
+        chat_id: -1001111241344134 #add chat id here
+        parse_mode: HTML
+        message: '{{ template "telegram.alert" . }}'
+        send_resolved: true
+  - name: '24x7-Team'
+    telegram_configs:
+      - api_url: 'https://api.telegram.org'
+        bot_token: '345kjdfgsdfgker873ug3n3or8' #add token here
+        chat_id: -100111124134419 #add chat id here
+        parse_mode: HTML
+        message: '{{ template "telegram.alert" . }}'
+        send_resolved: true
+  - name: 'default-receiver'
+    telegram_configs:
+      - api_url: 'https://api.telegram.org'
+        bot_token: '345kjdfgsdfgker873ug3n3or8' #add token here
+        chat_id: -100111125134419 #add chat id here
+        parse_mode: HTML
+        message: '{{ template "telegram.alert" . }}'
+        send_resolved: true
+
+####### configure alert suppressing #######
+inhibit_rules:
+  - source_match:
+      alertname: 'HostCriticallyHighCpuLoad'
+    target_match:
+      alertname: 'HostHighCpuLoad'
+    equal: ['instance']
+
