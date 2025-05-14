@@ -20,7 +20,7 @@
 ![item prototype](images/item1.JPG)
 ![items](images/item2.JPG)
 ![trigger prototype](images/trigger1.JPG)
-![triggers](images/trigger1.JPG)
+![triggers](images/trigger2.JPG)
 
 ##### 3. Графики метрик
 
