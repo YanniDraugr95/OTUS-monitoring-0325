@@ -1,0 +1,83 @@
+batch
+    |query('''
+        SELECT mean("usage_idle") AS "usage_idle"
+        FROM "yikorg"."autogen"."cpu"
+        WHERE time > now() - 1m
+    ''')
+    .period(1m)
+    .every(1m)
+    .groupBy('host')
+    |alert()
+        .crit(lambda: "usage_idle" < 90)
+        .message('CPU idle low: {{ index .Fields "usage_idle" }}%')
+        .telegram()
+
+batch
+    |query('''
+        SELECT mean("used_percent") AS "used_percent"
+        FROM "yikorg"."autogen"."mem"
+        WHERE time > now() - 1m
+    ''')
+    .period(1m)
+    .every(1m)
+    .groupBy('host')
+    |alert()
+        .warn(lambda: "used_percent" > 80)
+        .message('Memory usage high: {{ index .Fields "used_percent" }}%')
+        .telegram()
+
+batch
+    |query('''
+        SELECT last("probe_http_status_code") AS "probe_http_status_code"
+        FROM "yikorg"."autogen"."prometheus"
+        WHERE time > now() - 1m
+    ''')
+    .period(1m)
+    .every(1m)
+    .groupBy('host')
+    |alert()
+        .crit(lambda: "probe_http_status_code" >= 500 AND "probe_http_status_code" <= 599)
+        .message('Website is now on status {{ index .Fields "probe_http_status_code" }}')
+        .telegram()
+
+batch
+    |query('''
+        SELECT last("total_processes") AS "total_processes"
+        FROM "yikorg"."autogen"."phpfpm"
+        WHERE time > now() - 1m
+    ''')
+    .period(1m)
+    .every(1m)
+    .groupBy('host')
+    |alert()
+        .crit(lambda: "total_processes" == 0)
+        .message('PHP-FPM has {{ index .Fields "total_processes" }} processes')
+        .telegram()
+
+batch
+    |query('''
+        SELECT last("requests") AS "requests"
+        FROM "yikorg"."autogen"."nginx"
+        WHERE time > now() - 1m
+    ''')
+    .period(1m)
+    .every(1m)
+    .groupBy('host')
+    |alert()
+        .crit(lambda: "requests" == 0)
+        .message('Nginx has {{ index .Fields "requests" }} requests')
+        .telegram()
+
+batch
+    |query('''
+        SELECT last("connections") AS "connections"
+        FROM "yikorg"."autogen"."mysql_users"
+        WHERE time > now() - 1m
+    ''')
+    .period(1m)
+    .every(1m)
+    .groupBy('host')
+    |alert()
+        .crit(lambda: "connections" > 5)
+        .message('Too many connections: there are {{ index .Fields "connections" }} connections currently')
+        .telegram()
