@@ -23,7 +23,7 @@
 Конфигурационный файл приложен. Ниже - срины дата-стримов, индексов, дата-вью:
 
 ![datastreams](images/datastreams.JPG)
-![indicies](images/indicies.JPG)
+![indicies](images/indices.JPG)
 ![mysql-logs](images/mysql-logs.JPG)
 ![nginx-logs](images/nginx-logs.JPG)
 ![php-logs](images/php-logs.JPG)
