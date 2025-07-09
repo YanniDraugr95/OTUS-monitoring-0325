@@ -1,0 +1,84 @@
+sources:
+  filebeat:
+    type: "logstash"
+    address: "0.0.0.0:5045"
+
+transforms:
+  parse_logs:
+    type: "remap"
+    inputs: ["filebeat"]
+    source: |
+      if .data_stream.dataset == "nginx-access" {
+        parsed, err = parse_regex(
+          string!(.message),
+          r'^(?P<client_ip>\S+) \S+ \S+ \[(?P<timestamp>[^\]]+)\] "(?P<method>\S+) (?P<path>\S+) (?P<protocol>[^"]+)" (?P<status>\d{3}) (?P<body_bytes_sent>\d+) "(?P<referer>[^"]*)" "(?P<user_agent>[^"]*)" "(?P<trailing>[^"]*)"')
+
+        if err == null {
+          .client_ip = parsed.client_ip
+          .timestamp = parsed.timestamp
+          .method = parsed.method
+          .path = parsed.path
+          .protocol = parsed.protocol
+
+          status_val, status_err = to_int(parsed.status)
+          if status_err == null {
+            .status = status_val
+          }
+
+          bytes_val, bytes_err = to_int(parsed.body_bytes_sent)
+          if bytes_err == null {
+            .body_bytes_sent = bytes_val
+          }
+
+          .referer = parsed.referer
+          .user_agent = parsed.user_agent
+
+          ts, ts_err = parse_timestamp(parsed.timestamp, format: "%d/%b/%Y:%H:%M:%S %z")
+          if ts_err == null {
+            .timestamp = ts
+            . = merge(., {"@timestamp": ts})
+          }
+
+          del(.message)
+          del(.trailing)
+        } else {
+          .
+        }
+      } else {
+        .
+      }
+  parsed:
+    type: "filter"
+    inputs: ["parse_logs"]
+    condition: '.data_stream.dataset == "nginx-access"'
+
+  raw:
+    type: "filter"
+    inputs: ["parse_logs"]
+    condition: '.data_stream.dataset != "nginx-access"'
+
+sinks:
+  elasticsearch_parsed:
+    type: "elasticsearch"
+    inputs: ["parsed"]
+    endpoints:
+      - "https://192.168.98.11:9200"
+    mode: "data_stream"
+    auth:
+      strategy: "basic"
+      user: "user"
+      password: "password"
+    tls:
+      verify_certificate: false
+  elasticsearch_raw:
+    type: "elasticsearch"
+    inputs: ["raw"]
+    endpoints:
+      - "https://192.168.98.11:9200"
+    mode: "data_stream"
+    auth:
+      strategy: "basic"
+      user: "user"
+      password: "password"
+    tls:
+      verify_certificate: false
