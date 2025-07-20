@@ -1,0 +1,66 @@
+log-pipeline:
+  source:
+    http:
+      ssl: false
+      authentication:
+        unauthenticated:
+      port: 2021
+      path: /yik/logs/ingest
+
+  processor:
+    - grok:
+        match:
+          log:
+            - '%{IPORHOST:clientip} - %{DATA:ident} \[%{HTTPDATE:timestamp}\] "%{WORD:method} %{DATA:request} HTTP/%{NUMBER:httpversion}" %{NUMBER:response} %{NUMBER:bytes} "%{DATA:referrer}" "%{DATA:agent}" "%{DATA:forwarded_for}"'
+
+    - date:
+        from_time_received: true
+        destination: "@timestamp"
+
+  route:
+    - mysql-logs: '/log_type == "mysql-logs"'
+    - php-fpm-logs: '/log_type == "php-fpm-logs"'
+    - nginx-access-logs: '/log_type == "nginx-access-logs"'
+    - nginx-error-logs: '/log_type == "nginx-error-logs"'
+
+  sink:
+    - opensearch:
+        hosts: [ "https://192.168.94.20:9200" ]
+        insecure: true
+        username: "user"
+        password: "password"
+        index_type: custom
+        index: opensearch-logs-mysql-default
+        action: create
+        routes: [mysql-logs]
+
+    - opensearch:
+        hosts: [ "https://192.168.94.20:9200" ]
+        insecure: true
+        username: "user"
+        password: "password"
+        index_type: custom
+        index: opensearch-logs-php-fpm-default
+        action: create
+        routes: [php-fpm-logs]
+
+    - opensearch:
+        hosts: [ "https://192.168.94.20:9200" ]
+        insecure: true
+        username: "user"
+        password: "password"
+        index_type: custom
+        index: opensearch-logs-nginx-access-default
+        action: create
+        routes: [nginx-access-logs]
+
+    - opensearch:
+        hosts: [ "https://192.168.94.20:9200" ]
+        insecure: true
+        username: "user"
+        password: "password"
+        index_type: custom
+        index: opensearch-logs-nginx-error-default
+        action: create
+        routes: [nginx-error-logs]
+
