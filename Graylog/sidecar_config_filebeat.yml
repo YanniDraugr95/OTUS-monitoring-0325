@@ -1,0 +1,49 @@
+# Needed for Graylog
+fields_under_root: true
+fields.collector_node_id: ${sidecar.nodeName}
+fields.gl2_source_collector: ${sidecar.nodeId}
+
+
+output.logstash:
+   hosts: ["192.168.94.20:5044"]
+path:
+   data: ${sidecar.spoolDir!"/var/lib/graylog-sidecar/collectors/filebeat"}/data
+   logs: ${sidecar.spoolDir!"/var/lib/graylog-sidecar/collectors/filebeat"}/log
+
+filebeat.inputs:
+
+- type: filestream
+  id: php-filestream-id
+  enabled: true
+  paths:
+    - /var/log/php-fpm/*.log
+  fields_under_root: true
+  fields:
+    log_type: php-fpm-logs
+
+- type: filestream
+  id: mysql-filestream-id
+  enabled: true
+  paths:
+    - /var/log/mariadb/*.log
+  fields_under_root: true
+  fields:
+    log_type: mysql-logs
+    
+- type: filestream
+  id: nginx-access-filestream-id
+  enabled: true
+  paths:
+  - /var/log/nginx/access.log
+  fields_under_root: true
+  fields:
+    log_type: nginx-access-logs
+    
+- type: filestream
+  id: nginx-error-filestream-id
+  enabled: true
+  paths:
+  - /var/log/nginx/error.log
+  fields_under_root: true
+  fields:
+    log_type: nginx-error-logs

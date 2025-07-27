@@ -1,0 +1,11 @@
+# The URL to the Graylog server API.
+server_url: "http://192.168.94.20:9000/api/"
+
+# The API token to use to authenticate against the Graylog server API.
+# This field is mandatory
+server_api_token: "mytoken"
+
+# A list of tags to assign to this sidecar. Collector configuration matching any of these tags will automatically be
+# applied to the sidecar.
+tags:
+  - default

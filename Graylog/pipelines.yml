@@ -1,0 +1,28 @@
+input {
+  beats {
+    port => 5044
+    host => "0.0.0.0"
+    ssl => false
+  }
+}
+
+filter {
+  if [log_type] == "nginx-access-logs" {
+    grok {
+      match => {
+        "message" => [
+          '%{IPORHOST:nginx.access.client_ip} - %{DATA:nginx.access.user} \[%{HTTPDATE:nginx.access.timestamp}\] "%{WORD:nginx.access.method} %{DATA:nginx.access.request} HTTP/%{NUMBER:nginx.access.http_version}" %{NUMBER:nginx.access.status_code} %{NUMBER:nginx.access.bytes} "%{DATA:nginx.access.referrer}" "%{DATA:nginx.access.agent}" "%{DATA:nginx.access.other}"'
+        ]
+      }
+      tag_on_failure => []
+    }
+  }
+}
+
+output {
+  gelf {
+    host => "192.168.94.20"
+    port => 12201
+    protocol => "UDP"
+  }
+}
